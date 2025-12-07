@@ -3,8 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
-using EmreErkanGames.UniTaskExtensions.Core.Concrete;
+using EmreErkanGames.AwaitableExtensions.Core.Concrete;
 using UnityEngine;
 
 public class Test : MonoBehaviour
@@ -20,7 +19,7 @@ public class Test : MonoBehaviour
     private void Start()
     {
         _cancellationTokenSource = new();
-        _ = TestUniTaskParallelAsync();
+        _ = TestAwaitableParallelAsync();
     }
 
     private void Update()
@@ -34,17 +33,17 @@ public class Test : MonoBehaviour
         _cancellationTokenSource.Cancel();
     }
 
-    private async UniTask TestUniTaskParallelAsync()
+    private async Awaitable TestAwaitableParallelAsync()
     {
-        await TestUniTaskParallelForEachAsync();
+        await TestAwaitableParallelForEachAsync();
         Debug.Log(string.Empty);
-        await TestUniTaskParallelForAsync();
+        await TestAwaitableParallelForAsync();
     }
 
-    private async UniTask TestUniTaskParallelForEachAsync()
+    private async Awaitable TestAwaitableParallelForEachAsync()
     {
         var squareOfItems = new ConcurrentBag<Item>();
-        var parallelAsyncLoopResult = await UniTaskParallel.ForEachAsync(
+        var parallelAsyncLoopResult = await AwaitableParallel.ForEachAsync(
             Enumerable.Range(0, 100).Select(x => new Item
             {
                 Index = x,
@@ -80,11 +79,12 @@ public class Test : MonoBehaviour
             Debug.Log("Foreach operation completed");
     }
 
-    private async UniTask TestUniTaskParallelForAsync()
+    private async Awaitable TestAwaitableParallelForAsync()
     {
-        var parallelAsyncLoopResult = await UniTaskParallel.ForAsync(
+        var parallelAsyncLoopResult = await AwaitableParallel.ForAsync(
             0,
             1000000,
+            static
             async (item, loopState) =>
             {
                 if (item > 200000)
